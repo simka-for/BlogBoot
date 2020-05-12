@@ -1,4 +1,4 @@
-package com.BlogBoot.service.RequestBody;
+package com.BlogBoot.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

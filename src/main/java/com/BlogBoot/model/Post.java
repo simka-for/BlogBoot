@@ -53,26 +53,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<PostVote> postVote;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<PostComments> postComments;
-
-    public int getCommentsCount(){
-        return getPostComments().size();
-    }
-
-    public int getVotesCount(String value) {
-
-        List<PostVote> postVotes = getPostVote();
-
-        int likeCounts = 0;
-        int dislikeCount = 0;
-        for (PostVote postVote : postVotes)
-        {
-            if (postVote.getValue() == 1)
-                likeCounts++;
-            else dislikeCount++;
-        }
-        return (value.equals("likes")) ? likeCounts : dislikeCount;
-    }
 
 }
