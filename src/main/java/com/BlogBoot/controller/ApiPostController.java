@@ -1,6 +1,5 @@
 package com.BlogBoot.controller;
 
-import com.BlogBoot.repository.PostRepository;
 import com.BlogBoot.responses.PostResponseBody;
 import com.BlogBoot.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,21 +10,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/post")
 public class ApiPostController {
 
-    @Autowired
-    PostRepository postRepository;
+    private final PostService postService;
 
     @Autowired
-    PostService postService;
+    public ApiPostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PostResponseBody getAllPosts(
-            @RequestParam Integer offset,
-            @RequestParam Integer limit,
-            @RequestParam String mode){
+    public PostResponseBody getPosts(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "mode", defaultValue = "BEST") String mode){
 
         return postService.getPosts(offset, limit, mode);
-
     }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public PostResponseBody searchPost(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "query", defaultValue = "") String query){
+
+        return postService.searchPost(offset, limit, query);
+    }
+
+
+
 
 }

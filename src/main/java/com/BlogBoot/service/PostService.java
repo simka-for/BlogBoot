@@ -27,15 +27,22 @@ import java.util.List;
 @Transactional
 public class PostService {
 
-    @Autowired PostRepository postRepository;
-    @Autowired UserRepository userRepository;
-    @Autowired PostVoteRepository postVoteRepository;
-    @Autowired PostCommentsRepository postCommentsRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final PostVoteRepository postVoteRepository;
+    private final PostCommentsRepository postCommentsRepository;
 
+    @Autowired
+    public PostService(PostRepository postRepository, UserRepository userRepository, PostVoteRepository postVoteRepository, PostCommentsRepository postCommentsRepository) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.postVoteRepository = postVoteRepository;
+        this.postCommentsRepository = postCommentsRepository;
+    }
 
 
     @Transactional(readOnly = true)
-    public PostResponseBody getPosts(Integer offset, Integer limit, String mode) {
+    public PostResponseBody getPosts(int offset, int limit, String mode) {
 
         int count = postRepository.countSuitablePost();
         PostSort postSortMode = PostSort.valueOf(mode.toUpperCase());
@@ -60,6 +67,26 @@ public class PostService {
                 count(count)
                 .posts(postConvert(postList))
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponseBody searchPost(int offset, int limit, String query){
+
+        if (query.equals("")){
+            return getPosts(offset,limit, "BEST");
+        }else {
+
+            int count = postRepository.findCountSearchPost(query);
+            Pageable pageable = PageRequest.of(offset / limit, limit);
+
+            List<Post> searchPost = postRepository.findPostByQuery(query, pageable);
+
+            return PostResponseBody.builder()
+                    .count(count)
+                    .posts(postConvert(searchPost))
+                    .build();
+
+        }
     }
 
     private List<PostBody> postConvert(List<Post> posts) {
