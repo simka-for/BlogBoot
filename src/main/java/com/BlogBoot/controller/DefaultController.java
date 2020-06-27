@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
-public class DefaultController {
+public class giDefaultController {
 
     @GetMapping
     public String index(){
